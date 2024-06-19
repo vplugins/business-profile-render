@@ -14,10 +14,10 @@
     "author": "Website Pro Team",
     "license": "GPL-2.0-or-later",
     "devDependencies": {
-        "@wordpress/scripts": "^27.2.0",
-        "ajv": "^8.16.0",
-        "gulp": "^4.0.2",
-        "gulp-notify": "^4.0.0",
-        "gulp-wp-pot": "^2.5.0"
+      "@wordpress/scripts": "^27.2.0",
+      "ajv": "^8.16.0",
+      "gulp": "^4.0.2",
+      "gulp-notify": "^4.0.0",
+      "gulp-wp-pot": "^2.5.0"
     }
 }
