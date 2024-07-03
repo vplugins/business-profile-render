@@ -12,10 +12,10 @@ class Page
      */
     public static function init()
     {
-        add_action("admin_menu", [__CLASS__, "add_admin_page"]);
-        add_action("init", [__CLASS__, "add_action_wp_enqueue_styles"]);
-        add_action("init", [__CLASS__, "add_action_wp_enqueue_scripts"]);
-        add_action("init", [__CLASS__, "add_font_awesome"]);
+        add_action("admin_menu", array(__CLASS__, "add_admin_page"));
+        add_action("init", array(__CLASS__, "add_action_wp_enqueue_styles"));
+        add_action("init", array(__CLASS__, "add_action_wp_enqueue_scripts"));
+        add_action("init", array(__CLASS__, "add_font_awesome"));
     }
 
     public static function add_action_wp_enqueue_styles()
@@ -48,8 +48,8 @@ class Page
     public static function add_admin_page()
     {
         add_options_page(
-            "Business Profile Render", // Page title
-            "Business Profile Render", // Menu title
+            __("Business Profile Render", "business-profile-render"), // Page title
+            __("Business Profile Render", "business-profile-render"), // Menu title
             "manage_options", // Capability required to access the page
             "page-settings", // Menu slug
             [__CLASS__, "render_admin_page"] // Callback function to render the page
@@ -58,19 +58,25 @@ class Page
 
     public static function render_admin_page()
     {
-    $option_name = "bpr_business_profile";
-    $unserialized_data = get_option($option_name);
+        $option_name = "bpr_business_profile";
+        $unserialized_data = get_option($option_name);
 
-    if ($unserialized_data) {
-        $json_data = json_encode($unserialized_data);
-        $decoded_data = json_decode($json_data, true);
-    } else {
-        $decoded_data = [];
-    }
+        if ($unserialized_data) {
+            $json_data = json_encode($unserialized_data);
+            $decoded_data = json_decode($json_data, true);
+        } else {
+            $decoded_data = [];
+        }
+
+        // Generate full address
+        $full_address = self::generate_full_address($decoded_data);
+        if ($full_address) {
+            $decoded_data['full_address'] = $full_address;
+        }
 
         // Generate HTML based on the JSON data
         $html = '<div class="bpr_wrap">';
-        $html .= "<h1>Business Profile Settings</h1>";
+        $html .= "<h1>" . __("Business Profile Settings", "business-profile-render") . "</h1>";
         if (!empty($decoded_data)) {
             $html .= '<table class="form-table">';
             $html .= "<tr>";
@@ -86,28 +92,50 @@ class Page
             foreach ($decoded_data as $key => $value) {
                 $html .= '<tr class="bpr_copy-text">';
                 $html .=
-                    '<td><div class="bpr_shortcode_lable"><input type="text" class="bpr_text" value="' .
+                    '<td><div class="bpr_shortcode_lable"><input type="text" readonly class="bpr_text" value="' .
                     esc_attr("[business_profile attr='$key']") .
                     '"/><button class="bpr_btncpy"><i class="fas fa-copy"></i></button></td>';
                 $html .=
-                    '<td><div class="bpr_preview_lable">' .
-                    (empty($value)
-                        ? "No value"
-                        : esc_html(
-                            is_array($value) ? implode(", ", $value) : $value
-                        )) .
+                    '<td><div class="bpr_preview_lable">' . do_shortcode( '[business_profile attr="'.$key.'"]') .
                     "</div></td>";
                 $html .= "</tr>";
             }
             $html .= "</table>";
         } else {
-            $html .= "<p>No data found.</p>";
+            $html .= "<p>" . __("No data found.", "business-profile-render") . "</p>";
         }
 
         $html .= "</div>";
 
         // Output the generated HTML
         echo $html;
+    }
+
+    public static function generate_full_address($data)
+    {
+        // Define address components
+        $address_components = [
+            'address',
+            'city',
+            'state',
+            'zip',
+            'country'
+        ];
+
+        $full_address = [];
+
+        // Combine address components
+        foreach ($address_components as $component) {
+            if (!empty($data[$component])) {
+                $full_address[] = $data[$component];
+            }
+        }
+
+        if (empty($full_address)) {
+            return null;
+        }
+
+        return implode(', ', $full_address);
     }
 }
 
