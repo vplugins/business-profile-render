@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.2]
+
+#### Fixes
+
+- Changed admin notices
+- Fixed full address Shortcode
+- Fixed Gutenberg Elements
+   - Social Links with icon
+   - Logo Images
+
+## [1.5.1]
+
+#### Fixes
+
+- Deployment issue
+
+## [1.5.0]
+
+### Revamp the new version
+
+#### Fixes
+
+- Multiple revision issues
+
+#### Enhancement
+
+- Introduced psr-4 model
+- Reduced multiple shortcodes
+- Implemented font awesome
+- Added click-to-copy option
+
 ## [1.4.0]
 
 ### Updated
