@@ -243,7 +243,7 @@ class Deprecated {
      * Initializes the shortcodes for Hours of Operation  
      */
 
-     public static function business_profile_data_hours_of_operation() {
+    public static function business_profile_data_hours_of_operation() {
         $json_data = get_option('bpr_business_profile');
         $hours = $json_data['hours_of_operation'] ?? [];
     
