@@ -45,33 +45,26 @@ class GutenbergBlock {
     public static function preprocess_business_profile_data($data) {
         $processed_data = array();
 
-        $processed_data[''] = '';
-    
-        // Loop through each key-value pair in the data
         foreach ($data as $key => $value) {
-    
             // Capitalize each word in the key
             $processed_key = ucwords(str_replace('_', ' ', $key));
-    
-            // If the value is empty, set it to "No data available"
-            if (empty($value)) {
+
+            // Handle different value types properly
+            if ($value === '' || $value === null) {
                 $processed_value = __("No data available", 'business-profile-render');
+            } elseif (is_array($value)) {
+                $processed_value = implode(', ', array_map('sanitize_text_field', $value));
             } else {
-                // If the value is an array, implode it with ","
-                if (is_array($value)) {
-                    $processed_value = implode(', ', $value);
-                } else {
-                    $processed_value = $value;
-                }
+                $processed_value = sanitize_text_field((string) $value);
             }
-    
-            // Add processed key-value pair to the processed data array
+
+            // Store processed key-value pair
             $processed_data[$processed_key] = $processed_value;
         }
-    
-        return $processed_data;
-    }    
 
+        return $processed_data;
+    }
+        
 }
 
 GutenbergBlock::init();
