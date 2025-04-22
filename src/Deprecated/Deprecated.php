@@ -245,31 +245,62 @@ class Deprecated {
 
     public static function business_profile_data_hours_of_operation() {
         $json_data = get_option('bpr_business_profile');
-        $hours = $json_data['hours_of_operation'];
-        $hours_of_operation = "<ul class='ul-business-profile-data-'hours-of-operation style='padding-left: 0px; list-style: none;'>";    
-        foreach ($hours as $hour) {
-            $hours_of_operation .= "<li class='li-business-profile-data-hours-of-operation'>$hour</li>";
-        }
-        $hours_of_operation .= "</ul>";
+        $hours = $json_data['hours_of_operation'] ?? [];
+    
+        // Check if hours of operation exist
         if (empty($hours)) {
-            return "<ul class='ul-business-profile-data-hours-of-operation' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-data-hours-of-operation'>Missing Hours of Operation</li></ul>";
+            return "<ul class='ul-business-profile-data-hours-of-operation empty' style='padding-left: 0px; list-style: none;'>
+                        <li class='li-business-profile-data-hours-of-operation'>Missing Hours of Operation</li>
+                    </ul>";
         }
+    
+        // Start building the hours of operation list
+        $hours_of_operation = "<ul class='ul-business-profile-data-hours-of-operation not-empty' style='padding-left: 0px; list-style: none;'>";
+    
+        foreach ($hours as $hour) {
+            // Assuming each $hour is already a plain string like "Monday: 9:00 AM – 5:00 PM"
+            $hours_of_operation .= "<li class='li-business-profile-data-hours-of-operation'>
+                                        $hour
+                                    </li>";
+        }
+    
+        // Close the list and return
+        $hours_of_operation .= "</ul>";
+    
         return $hours_of_operation;
     }
-
+    
+    
     public static function business_profile_render_hours_of_operation() {
-        $json_data = get_option('bpr_business_profile');
-        $hours = $json_data['hours_of_operation'];
-        $hours_of_operation = "<ul class='ul-business-profile-render-'hours-of-operation style='padding-left: 0px; list-style: none;'>";    
-        foreach ($hours as $hour) {
-            $hours_of_operation .= "<li class='li-business-profile-render-hours-of-operation'>$hour</li>";
-        }
-        $hours_of_operation .= "</ul>";
-        if (empty($hours)) {
-            return "<ul class='ul-business-profile-render-hours-of-operation' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-render-hours-of-operation'>Missing Hours of Operation</li></ul>";
-        }
-        return $hours_of_operation;
-    }
+		$json_data = get_option('bpr_business_profile');
+		$hours = $json_data['hours_of_operation'];
+
+		// Check if hours of operation exist
+		if (empty($hours)) {
+			return "<ul class='ul-business-profile-render-hours-of-operation empty' style='padding-left: 0px; list-style: none;'>
+						<li class='li-business-profile-render-hours-of-operation'>Missing Hours of Operation</li>
+					</ul>";
+		}
+
+		// Start building the hours of operation list
+		$hours_of_operation = "<ul class='ul-business-profile-render-hours-of-operation not-empty' style='padding-left: 0px; list-style: none;'>";    
+
+		foreach ($hours as $hour) {
+			$day_of_week = isset($hour['day_of_week'][0]) ? $hour['day_of_week'][0] : 'Unknown Day';
+			$opens = isset($hour['opens']) ? date("g:i A", strtotime($hour['opens'])) : 'Closed';
+			$closes = isset($hour['closes']) ? date("g:i A", strtotime($hour['closes'])) : 'Closed';
+
+			// Format each day's operation hours
+			$hours_of_operation .= "<li class='li-business-profile-render-hours-of-operation'>
+										<strong>$day_of_week:</strong> $opens - $closes
+									</li>";
+		}
+
+		// Close the list and return
+		$hours_of_operation .= "</ul>";
+
+		return $hours_of_operation;
+	}
 
     /**
      * Exit the shortcodes for Hours of Operation   
