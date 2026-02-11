@@ -29,11 +29,13 @@ class ShortCode
         // Get the attribute value from shortcode or use default 'company_name'
         $attr = isset($attr["attr"]) ? $attr["attr"] : BUSINESS_PROFILE_RENDER_DEFAULT_OPTION;
 
-        // Special cases for 'full_address' and 'images'
+        // Special cases for 'full_address', 'images', and 'hours_of_operation'
         if ($attr === 'full_address') {
             return self::render_full_address($json_data);
         } elseif ($attr === 'images') {
             return self::render_images_logo($json_data);
+        } elseif ($attr === 'hours_of_operation') {
+            return self::render_hours_of_operation($json_data);
         } elseif (!array_key_exists($attr, $json_data)) {
             return __("Attribute not found", "business-profile-render");
         }
@@ -109,6 +111,57 @@ class ShortCode
         $images = $json_data['images'];
         $html = "<img src='" . $images['logo'] . "' alt='logo' style='width: 100px; height: 100px;'>";
         return $html;
+    }
+
+    public static function render_hours_of_operation($json_data)
+    {
+        if (!isset($json_data['hours_of_operation']) || empty($json_data['hours_of_operation'])) {
+            return __("Hours of operation not available", "business-profile-render");
+        }
+
+        $hours = $json_data['hours_of_operation'];
+
+        if (is_string($hours)) {
+            return esc_html($hours);
+        }
+
+        if (!is_array($hours)) {
+            return __("Invalid hours format", "business-profile-render");
+        }
+
+        $output = "<ul class='hours-of-operation-list' style='padding-left: 0px; list-style: none;'>";
+
+        foreach ($hours as $time_block) {
+            if (!is_array($time_block)) {
+                $output .= "<li>" . esc_html($time_block) . "</li>";
+                continue;
+            }
+
+            $days = isset($time_block['day_of_week']) ? $time_block['day_of_week'] : [];
+            $opens = isset($time_block['opens']) ? esc_html($time_block['opens']) : '';
+            $closes = isset($time_block['closes']) ? esc_html($time_block['closes']) : '';
+            $description = isset($time_block['description']) ? esc_html($time_block['description']) : '';
+
+            if (is_array($days) && !empty($days)) {
+                $days_text = implode(', ', array_map('esc_html', $days));
+            } else {
+                continue;
+            }
+
+            if ($opens && $closes) {
+                $time_string = "{$opens} - {$closes}";
+                $line = "{$days_text}: {$time_string}";
+
+                if ($description) {
+                    $line .= " ({$description})";
+                }
+
+                $output .= "<li>{$line}</li>";
+            }
+        }
+
+        $output .= "</ul>";
+        return $output;
     }
 }
 

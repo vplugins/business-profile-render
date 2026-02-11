@@ -246,28 +246,64 @@ class Deprecated {
     public static function business_profile_data_hours_of_operation() {
         $json_data = get_option('bpr_business_profile');
         $hours = $json_data['hours_of_operation'];
-        $hours_of_operation = "<ul class='ul-business-profile-data-'hours-of-operation style='padding-left: 0px; list-style: none;'>";    
-        foreach ($hours as $hour) {
-            $hours_of_operation .= "<li class='li-business-profile-data-hours-of-operation'>$hour</li>";
-        }
-        $hours_of_operation .= "</ul>";
+
         if (empty($hours)) {
             return "<ul class='ul-business-profile-data-hours-of-operation' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-data-hours-of-operation'>Missing Hours of Operation</li></ul>";
         }
+
+        $hours_of_operation = "<ul class='ul-business-profile-data-hours-of-operation' style='padding-left: 0px; list-style: none;'>";
+
+        foreach ($hours as $time_block) {
+            if (!is_array($time_block)) {
+                $hours_of_operation .= "<li class='li-business-profile-data-hours-of-operation'>" . esc_html($time_block) . "</li>";
+                continue;
+            }
+
+            $days = isset($time_block['day_of_week']) ? $time_block['day_of_week'] : [];
+            $opens = isset($time_block['opens']) ? esc_html($time_block['opens']) : '';
+            $closes = isset($time_block['closes']) ? esc_html($time_block['closes']) : '';
+
+            if (is_array($days) && !empty($days)) {
+                $days_text = implode(', ', array_map('esc_html', $days));
+                if ($opens && $closes) {
+                    $hours_of_operation .= "<li class='li-business-profile-data-hours-of-operation'>{$days_text}: {$opens} - {$closes}</li>";
+                }
+            }
+        }
+
+        $hours_of_operation .= "</ul>";
         return $hours_of_operation;
     }
 
     public static function business_profile_render_hours_of_operation() {
         $json_data = get_option('bpr_business_profile');
         $hours = $json_data['hours_of_operation'];
-        $hours_of_operation = "<ul class='ul-business-profile-render-'hours-of-operation style='padding-left: 0px; list-style: none;'>";    
-        foreach ($hours as $hour) {
-            $hours_of_operation .= "<li class='li-business-profile-render-hours-of-operation'>$hour</li>";
-        }
-        $hours_of_operation .= "</ul>";
+
         if (empty($hours)) {
             return "<ul class='ul-business-profile-render-hours-of-operation' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-render-hours-of-operation'>Missing Hours of Operation</li></ul>";
         }
+
+        $hours_of_operation = "<ul class='ul-business-profile-render-hours-of-operation' style='padding-left: 0px; list-style: none;'>";
+
+        foreach ($hours as $time_block) {
+            if (!is_array($time_block)) {
+                $hours_of_operation .= "<li class='li-business-profile-render-hours-of-operation'>" . esc_html($time_block) . "</li>";
+                continue;
+            }
+
+            $days = isset($time_block['day_of_week']) ? $time_block['day_of_week'] : [];
+            $opens = isset($time_block['opens']) ? esc_html($time_block['opens']) : '';
+            $closes = isset($time_block['closes']) ? esc_html($time_block['closes']) : '';
+
+            if (is_array($days) && !empty($days)) {
+                $days_text = implode(', ', array_map('esc_html', $days));
+                if ($opens && $closes) {
+                    $hours_of_operation .= "<li class='li-business-profile-render-hours-of-operation'>{$days_text}: {$opens} - {$closes}</li>";
+                }
+            }
+        }
+
+        $hours_of_operation .= "</ul>";
         return $hours_of_operation;
     }
 
