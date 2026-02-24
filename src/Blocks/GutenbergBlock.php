@@ -110,19 +110,50 @@ class GutenbergBlock {
             $closes = isset($time_block['closes']) ? sanitize_text_field($time_block['closes']) : '';
 
             if (is_array($days) && !empty($days)) {
-                $days_text = implode(', ', array_map('sanitize_text_field', $days));
+                $days_text = implode(', ', array_map(array(__CLASS__, 'translate_day_name'), $days));
             } else {
                 continue;
             }
 
             if ($opens && $closes) {
-                $result[] = "{$days_text}: {$opens} - {$closes}";
+                $entry = "{$days_text}: {$opens} - {$closes}";
+                if (!empty($time_block['description'])) {
+                    $entry .= " (" . self::translate_description($time_block['description']) . ")";
+                }
+                $result[] = $entry;
+            } elseif (!empty($time_block['description'])) {
+                $result[] = "{$days_text}: " . self::translate_description($time_block['description']);
             }
         }
 
         return !empty($result) ? implode(' | ', $result) : __("No hours available", 'business-profile-render');
     }
-        
+
+    private static function translate_description($description) {
+        $map = [
+            'Closed'        => __('Closed', 'business-profile-render'),
+            'Open 24 hours' => __('Open 24 hours', 'business-profile-render'),
+        ];
+        return isset($map[$description]) ? sanitize_text_field($map[$description]) : sanitize_text_field($description);
+    }
+
+    private static function translate_day_name($day) {
+        global $wp_locale;
+        $day_index = [
+            'Sunday'    => 0,
+            'Monday'    => 1,
+            'Tuesday'   => 2,
+            'Wednesday' => 3,
+            'Thursday'  => 4,
+            'Friday'    => 5,
+            'Saturday'  => 6,
+        ];
+        if (isset($day_index[$day])) {
+            return sanitize_text_field($wp_locale->get_weekday($day_index[$day]));
+        }
+        return sanitize_text_field($day);
+    }
+
 }
 
 GutenbergBlock::init();

@@ -215,7 +215,7 @@ class Deprecated {
         }
         $services_list .= "</ul>";
         if (empty($services)) {
-            return "<ul class='ul-business-profile-data-services' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-data-services'>None Configured</li></ul>";
+            return "<ul class='ul-business-profile-data-services' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-data-services'>" . esc_html__("None Configured", "business-profile-render") . "</li></ul>";
         }
         return $services_list;
     }
@@ -223,13 +223,13 @@ class Deprecated {
     public static function business_profile_render_services() {
         $json_data = get_option('bpr_business_profile');
         $services = $json_data['services_offered'];
-        $services_list = "<ul class='ul-business-profile-render-services' style='padding-left: 0px; list-style: none;'>";    
+        $services_list = "<ul class='ul-business-profile-render-services' style='padding-left: 0px; list-style: none;'>";
         foreach ($services as $service) {
             $services_list .= "<li class='li-business-profile-render-services'>$service</li>";
         }
         $services_list .= "</ul>";
         if (empty($services)) {
-            return "<ul class='ul-business-profile-render-services' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-render-services'>None Configured</li></ul>";
+            return "<ul class='ul-business-profile-render-services' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-render-services'>" . esc_html__("None Configured", "business-profile-render") . "</li></ul>";
         }
         return $services_list;
     }
@@ -248,7 +248,7 @@ class Deprecated {
         $hours = $json_data['hours_of_operation'];
 
         if (empty($hours)) {
-            return "<ul class='ul-business-profile-data-hours-of-operation' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-data-hours-of-operation'>Missing Hours of Operation</li></ul>";
+            return "<ul class='ul-business-profile-data-hours-of-operation' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-data-hours-of-operation'>" . esc_html__("Missing Hours of Operation", "business-profile-render") . "</li></ul>";
         }
 
         $hours_of_operation = "<ul class='ul-business-profile-data-hours-of-operation' style='padding-left: 0px; list-style: none;'>";
@@ -259,14 +259,21 @@ class Deprecated {
                 continue;
             }
 
-            $days = isset($time_block['day_of_week']) ? $time_block['day_of_week'] : [];
-            $opens = isset($time_block['opens']) ? esc_html($time_block['opens']) : '';
-            $closes = isset($time_block['closes']) ? esc_html($time_block['closes']) : '';
+            $days        = isset($time_block['day_of_week'])  ? $time_block['day_of_week']  : [];
+            $opens       = isset($time_block['opens'])        ? esc_html($time_block['opens'])       : '';
+            $closes      = isset($time_block['closes'])       ? esc_html($time_block['closes'])      : '';
+            $description = isset($time_block['description'])  ? $time_block['description']           : '';
 
             if (is_array($days) && !empty($days)) {
-                $days_text = implode(', ', array_map('esc_html', $days));
+                $days_text = implode(', ', array_map(array(__CLASS__, 'translate_day_name'), $days));
                 if ($opens && $closes) {
-                    $hours_of_operation .= "<li class='li-business-profile-data-hours-of-operation'>{$days_text}: {$opens} - {$closes}</li>";
+                    $line = "{$days_text}: {$opens} - {$closes}";
+                    if ($description) {
+                        $line .= " (" . self::translate_description($description) . ")";
+                    }
+                    $hours_of_operation .= "<li class='li-business-profile-data-hours-of-operation'>{$line}</li>";
+                } elseif ($description) {
+                    $hours_of_operation .= "<li class='li-business-profile-data-hours-of-operation'>{$days_text}: " . self::translate_description($description) . "</li>";
                 }
             }
         }
@@ -280,7 +287,7 @@ class Deprecated {
         $hours = $json_data['hours_of_operation'];
 
         if (empty($hours)) {
-            return "<ul class='ul-business-profile-render-hours-of-operation' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-render-hours-of-operation'>Missing Hours of Operation</li></ul>";
+            return "<ul class='ul-business-profile-render-hours-of-operation' style='padding-left: 0px; list-style: none;'><li class='li-business-profile-render-hours-of-operation'>" . esc_html__("Missing Hours of Operation", "business-profile-render") . "</li></ul>";
         }
 
         $hours_of_operation = "<ul class='ul-business-profile-render-hours-of-operation' style='padding-left: 0px; list-style: none;'>";
@@ -291,20 +298,52 @@ class Deprecated {
                 continue;
             }
 
-            $days = isset($time_block['day_of_week']) ? $time_block['day_of_week'] : [];
-            $opens = isset($time_block['opens']) ? esc_html($time_block['opens']) : '';
-            $closes = isset($time_block['closes']) ? esc_html($time_block['closes']) : '';
+            $days        = isset($time_block['day_of_week'])  ? $time_block['day_of_week']  : [];
+            $opens       = isset($time_block['opens'])        ? esc_html($time_block['opens'])       : '';
+            $closes      = isset($time_block['closes'])       ? esc_html($time_block['closes'])      : '';
+            $description = isset($time_block['description'])  ? $time_block['description']           : '';
 
             if (is_array($days) && !empty($days)) {
-                $days_text = implode(', ', array_map('esc_html', $days));
+                $days_text = implode(', ', array_map(array(__CLASS__, 'translate_day_name'), $days));
                 if ($opens && $closes) {
-                    $hours_of_operation .= "<li class='li-business-profile-render-hours-of-operation'>{$days_text}: {$opens} - {$closes}</li>";
+                    $line = "{$days_text}: {$opens} - {$closes}";
+                    if ($description) {
+                        $line .= " (" . self::translate_description($description) . ")";
+                    }
+                    $hours_of_operation .= "<li class='li-business-profile-render-hours-of-operation'>{$line}</li>";
+                } elseif ($description) {
+                    $hours_of_operation .= "<li class='li-business-profile-render-hours-of-operation'>{$days_text}: " . self::translate_description($description) . "</li>";
                 }
             }
         }
 
         $hours_of_operation .= "</ul>";
         return $hours_of_operation;
+    }
+
+    private static function translate_description($description) {
+        $map = [
+            'Closed'        => __('Closed', 'business-profile-render'),
+            'Open 24 hours' => __('Open 24 hours', 'business-profile-render'),
+        ];
+        return isset($map[$description]) ? esc_html($map[$description]) : esc_html($description);
+    }
+
+    private static function translate_day_name($day) {
+        global $wp_locale;
+        $day_index = [
+            'Sunday'    => 0,
+            'Monday'    => 1,
+            'Tuesday'   => 2,
+            'Wednesday' => 3,
+            'Thursday'  => 4,
+            'Friday'    => 5,
+            'Saturday'  => 6,
+        ];
+        if (isset($day_index[$day])) {
+            return esc_html($wp_locale->get_weekday($day_index[$day]));
+        }
+        return esc_html($day);
     }
 
     /**

@@ -143,25 +143,49 @@ class ShortCode
             $description = isset($time_block['description']) ? esc_html($time_block['description']) : '';
 
             if (is_array($days) && !empty($days)) {
-                $days_text = implode(', ', array_map('esc_html', $days));
+                $days_text = implode(', ', array_map(array(__CLASS__, 'translate_day_name'), $days));
             } else {
                 continue;
             }
 
             if ($opens && $closes) {
-                $time_string = "{$opens} - {$closes}";
-                $line = "{$days_text}: {$time_string}";
-
+                $line = "{$days_text}: {$opens} - {$closes}";
                 if ($description) {
-                    $line .= " ({$description})";
+                    $line .= " (" . self::translate_description($description) . ")";
                 }
-
                 $output .= "<li>{$line}</li>";
+            } elseif ($description) {
+                $output .= "<li>{$days_text}: " . self::translate_description($description) . "</li>";
             }
         }
 
         $output .= "</ul>";
         return $output;
+    }
+
+    private static function translate_description($description) {
+        $map = [
+            'Closed'        => __('Closed', 'business-profile-render'),
+            'Open 24 hours' => __('Open 24 hours', 'business-profile-render'),
+        ];
+        return isset($map[$description]) ? esc_html($map[$description]) : esc_html($description);
+    }
+
+    private static function translate_day_name($day) {
+        global $wp_locale;
+        $day_index = [
+            'Sunday'    => 0,
+            'Monday'    => 1,
+            'Tuesday'   => 2,
+            'Wednesday' => 3,
+            'Thursday'  => 4,
+            'Friday'    => 5,
+            'Saturday'  => 6,
+        ];
+        if (isset($day_index[$day])) {
+            return esc_html($wp_locale->get_weekday($day_index[$day]));
+        }
+        return esc_html($day);
     }
 }
 
