@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.4]
+
+#### Enhancement
+
+- Added internationalization (i18n) support for hours of operation display
+  - Day names now render in the WordPress site language using core locale (`$wp_locale`)
+  - Added `translate_description()` helper to translate status values (e.g. "Closed", "Open 24 hours")
+  - Added `load_plugin_textdomain()` so plugin-specific strings load from the `language/` directory
+  - Updated `.pot` file with all translatable strings
+
+#### Bug
+
+- Fixed hours of operation not displaying days with no open/close times (e.g. Saturday/Sunday marked as Closed)
+- Fixed undefined `$description` variable in `Deprecated.php` hours methods causing Closed days to be silently skipped
+- Fixed inconsistent description rendering — all three renderers (Shortcode, Deprecated, Gutenberg) now consistently append description in parentheses when both hours and a description are present
+
 ## [1.5.3]
 
 #### Bug
