@@ -2,7 +2,7 @@
 /*
 Plugin Name: Business Profile Render
 Description: Tool to provide utilities for displaying synchronized business profile data
-Version: 1.5.3
+Version: 1.5.4
 Author: Website Pro Team
 License: GPL v2 or later
 */
@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'BUSINESS_PROFILE_RENDER_OPTION', 'bpr_business_profile' );
 define( 'BUSINESS_PROFILE_RENDER_DEFAULT_OPTION', 'company_name' );
 define( 'BUSINESS_PROFILE_RENDER_FILE', __FILE__ );
+
+add_action( 'plugins_loaded', function() {
+    load_plugin_textdomain( 'business-profile-render', false, dirname( plugin_basename( __FILE__ ) ) . '/language' );
+} );
 
 // Load Composer autoloader
 require_once __DIR__ . '/vendor/autoload.php'; 

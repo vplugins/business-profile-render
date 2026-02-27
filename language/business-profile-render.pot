@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-05-21 19:46+0000\n"
+"POT-Creation-Date: 2026-02-25 00:00+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -14,34 +14,66 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/Admin/AdminNotice.php:28
+#: ../src/Admin/AdminNotice.php
 msgid "Please contact Website pro team"
 msgstr ""
 
-#: ../src/Blocks/GutenbergBlock.php:58
+#: ../src/Blocks/GutenbergBlock.php
 msgid "No data available"
 msgstr ""
 
-#: ../src/Helper/Page.php:51, ../src/Helper/Page.php:52
+#: ../src/Blocks/GutenbergBlock.php
+msgid "Complex data - use shortcode for display"
+msgstr ""
+
+#: ../src/Blocks/GutenbergBlock.php
+msgid "No hours available"
+msgstr ""
+
+#: ../src/Helper/Page.php
 msgid "Business Profile Render"
 msgstr ""
 
-#: ../src/Helper/Page.php:74
+#: ../src/Helper/Page.php
 msgid "Business Profile Settings"
 msgstr ""
 
-#: ../src/Helper/Page.php:105
+#: ../src/Helper/Page.php
 msgid "No data found."
 msgstr ""
 
-#: ../src/Shortcode/Shortcode.php:29
+#: ../src/Shortcode/Shortcode.php
 msgid "Business profile data not found"
 msgstr ""
 
-#: ../src/Shortcode/Shortcode.php:36
+#: ../src/Shortcode/Shortcode.php
 msgid "Attribute not found"
 msgstr ""
 
-#: ../src/Shortcode/Shortcode.php:48
-msgid "Invalid URL"
+#: ../src/Shortcode/Shortcode.php
+msgid "Full address not available"
+msgstr ""
+
+#: ../src/Shortcode/Shortcode.php, ../src/Blocks/GutenbergBlock.php
+msgid "Hours of operation not available"
+msgstr ""
+
+#: ../src/Shortcode/Shortcode.php, ../src/Blocks/GutenbergBlock.php
+msgid "Invalid hours format"
+msgstr ""
+
+#: ../src/Deprecated/Deprecated.php
+msgid "Missing Hours of Operation"
+msgstr ""
+
+#: ../src/Deprecated/Deprecated.php
+msgid "None Configured"
+msgstr ""
+
+#: ../src/Shortcode/Shortcode.php, ../src/Deprecated/Deprecated.php, ../src/Blocks/GutenbergBlock.php
+msgid "Closed"
+msgstr ""
+
+#: ../src/Shortcode/Shortcode.php, ../src/Deprecated/Deprecated.php, ../src/Blocks/GutenbergBlock.php
+msgid "Open 24 hours"
 msgstr ""
