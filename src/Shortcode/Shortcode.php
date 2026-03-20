@@ -29,15 +29,15 @@ class ShortCode
         // Get the attribute value from shortcode or use default 'company_name'
         $attr = isset($attr["attr"]) ? $attr["attr"] : BUSINESS_PROFILE_RENDER_DEFAULT_OPTION;
 
-        // Special cases for 'full_address', 'images', 'hours_of_operation', and 'booking_link'
+        // Special cases for 'full_address', 'images', 'hours_of_operation', and 'booking_url'
         if ($attr === 'full_address') {
             return self::render_full_address($json_data);
         } elseif ($attr === 'images') {
             return self::render_images_logo($json_data);
         } elseif ($attr === 'hours_of_operation') {
             return self::render_hours_of_operation($json_data);
-        } elseif ($attr === 'booking_link') {
-            return self::render_booking_link($json_data);
+        } elseif ($attr === 'booking_url') {
+            return self::render_booking_url($json_data);
         } elseif (!array_key_exists($attr, $json_data)) {
             return __("Attribute not found", "business-profile-render");
         }
@@ -165,19 +165,19 @@ class ShortCode
         return $output;
     }
 
-    public static function render_booking_link($json_data)
+    public static function render_booking_url($json_data)
     {
-        if (!isset($json_data['booking_link']) || empty($json_data['booking_link'])) {
-            return __("Booking link not available", "business-profile-render");
+        if (!isset($json_data['booking_url']) || empty($json_data['booking_url'])) {
+            return __("Booking URL not available", "business-profile-render");
         }
 
-        $booking_link = $json_data['booking_link'];
+        $booking_url = $json_data['booking_url'];
 
-        if (!self::is_valid_url($booking_link)) {
-            return __("Invalid booking link", "business-profile-render");
+        if (!self::is_valid_url($booking_url)) {
+            return __("Invalid booking URL", "business-profile-render");
         }
 
-        return esc_url($booking_link);
+        return esc_url($booking_url);
     }
 
     private static function translate_description($description) {

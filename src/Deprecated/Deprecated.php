@@ -25,7 +25,7 @@ class Deprecated {
             'business-profile-data-toll-free-number'          => 'toll_free_number',
             'business-profile-data-company-description'       => 'description',
             'business-profile-data-company-short-description' => 'short_description',
-            'business-profile-data-booking-link'              => 'booking_link',
+            'business-profile-data-booking-url'              => 'booking_url',
 
         // This shortcode supports Business Profile Render elements
 
@@ -39,7 +39,7 @@ class Deprecated {
             'business-profile-render-toll-free-number'          => 'toll_free_number',
             'business-profile-render-company-description'       => 'description',
             'business-profile-render-company-short-description' => 'short_description',
-            'business-profile-render-booking-link'              => 'booking_link',
+            'business-profile-render-booking-url'              => 'booking_url',
 
         ];
 
