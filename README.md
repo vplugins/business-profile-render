@@ -58,6 +58,7 @@ Make sure to enclose the attribute name within double quotation marks (" "). Thi
 |`[business_profile]`| instagram_url |  |
 |`[business_profile]`| pinterest_url |  |
 |`[business_profile]`| linkedin_url |  |
+|`[business_profile]`| booking_link |  |
 |`[business_profile]`| tax_ids |  |
 
 
@@ -79,6 +80,7 @@ Our "Business Profile Data" and "Business Profile Render" plugins use distinct s
 |`[business-profile-render-hours-of-operation] & [business-profile-data-hours-of-operation]`|Working Hours|
 |`[business-profile-render-company-description] & [business-profile-data-company-description]`|Description|
 |`[business-profile-render-company-short-description] & [business-profile-data-company-short-description]`|Short Description|
+|`[business-profile-render-booking-link] & [business-profile-data-booking-link]`|Booking Link|
 |`[business-profile-render-primary] & [business-profile-data-primary]`|Primary|
 |`[business-profile-render-logo] & [business-profile-data-logo]`|Logo|
 |`[business-profile-render-services] & [business-profile-data-services]`|Services|

@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Added `translate_description()` helper to translate status values (e.g. "Closed", "Open 24 hours")
   - Added `load_plugin_textdomain()` so plugin-specific strings load from the `language/` directory
   - Updated `.pot` file with all translatable strings
+  - Added Booking Link field as a shortcode
 
 #### Bug
 
