@@ -97,32 +97,53 @@ class GutenbergBlock {
             return sanitize_text_field((string) $hours);
         }
 
-        $result = array();
+        $day_order = ['Sunday' => 0, 'Monday' => 1, 'Tuesday' => 2, 'Wednesday' => 3, 'Thursday' => 4, 'Friday' => 5, 'Saturday' => 6];
+        $grouped = [];
+        $plain = [];
 
         foreach ($hours as $time_block) {
             if (!is_array($time_block)) {
-                $result[] = sanitize_text_field($time_block);
+                $plain[] = sanitize_text_field($time_block);
                 continue;
             }
 
             $days = isset($time_block['day_of_week']) ? $time_block['day_of_week'] : [];
-            $opens = isset($time_block['opens']) ? sanitize_text_field($time_block['opens']) : '';
-            $closes = isset($time_block['closes']) ? sanitize_text_field($time_block['closes']) : '';
-
-            if (is_array($days) && !empty($days)) {
-                $days_text = implode(', ', array_map(array(__CLASS__, 'translate_day_name'), $days));
-            } else {
+            if (!is_array($days) || empty($days)) {
                 continue;
             }
 
+            $opens = isset($time_block['opens']) ? sanitize_text_field($time_block['opens']) : '';
+            $closes = isset($time_block['closes']) ? sanitize_text_field($time_block['closes']) : '';
+            $description = isset($time_block['description']) ? $time_block['description'] : '';
+
+            $day_key = implode(',', $days);
+            $sort_order = isset($day_order[$days[0]]) ? $day_order[$days[0]] : 99;
+
+            if (!isset($grouped[$day_key])) {
+                $grouped[$day_key] = ['days' => $days, 'ranges' => [], 'sort' => $sort_order];
+            }
+
             if ($opens && $closes) {
-                $entry = "{$days_text}: {$opens} - {$closes}";
-                if (!empty($time_block['description'])) {
-                    $entry .= " (" . self::translate_description($time_block['description']) . ")";
+                $range = "{$opens} - {$closes}";
+                if ($description) {
+                    $range .= " (" . self::translate_description($description) . ")";
                 }
-                $result[] = $entry;
-            } elseif (!empty($time_block['description'])) {
-                $result[] = "{$days_text}: " . self::translate_description($time_block['description']);
+                $grouped[$day_key]['ranges'][] = $range;
+            } elseif ($description) {
+                $grouped[$day_key]['ranges'][] = self::translate_description($description);
+            }
+        }
+
+        uasort($grouped, function($a, $b) {
+            return $a['sort'] - $b['sort'];
+        });
+
+        $result = $plain;
+
+        foreach ($grouped as $entry) {
+            $days_text = implode(', ', array_map(array(__CLASS__, 'translate_day_name'), $entry['days']));
+            if (!empty($entry['ranges'])) {
+                $result[] = "{$days_text}: " . implode(', ', $entry['ranges']);
             }
         }
 
