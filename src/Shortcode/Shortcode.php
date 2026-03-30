@@ -29,13 +29,15 @@ class ShortCode
         // Get the attribute value from shortcode or use default 'company_name'
         $attr = isset($attr["attr"]) ? $attr["attr"] : BUSINESS_PROFILE_RENDER_DEFAULT_OPTION;
 
-        // Special cases for 'full_address', 'images', and 'hours_of_operation'
+        // Special cases for 'full_address', 'images', 'hours_of_operation', and 'booking_url'
         if ($attr === 'full_address') {
             return self::render_full_address($json_data);
         } elseif ($attr === 'images') {
             return self::render_images_logo($json_data);
         } elseif ($attr === 'hours_of_operation') {
             return self::render_hours_of_operation($json_data);
+        } elseif ($attr === 'booking_url') {
+            return self::render_booking_url($json_data);
         } elseif (!array_key_exists($attr, $json_data)) {
             return __("Attribute not found", "business-profile-render");
         }
@@ -129,38 +131,79 @@ class ShortCode
             return __("Invalid hours format", "business-profile-render");
         }
 
-        $output = "<ul class='hours-of-operation-list' style='padding-left: 0px; list-style: none;'>";
+        $day_order = ['Sunday' => 0, 'Monday' => 1, 'Tuesday' => 2, 'Wednesday' => 3, 'Thursday' => 4, 'Friday' => 5, 'Saturday' => 6];
+        $grouped = [];
 
         foreach ($hours as $time_block) {
             if (!is_array($time_block)) {
-                $output .= "<li>" . esc_html($time_block) . "</li>";
+                $grouped['__plain__'][] = ['plain' => esc_html($time_block)];
                 continue;
             }
 
             $days = isset($time_block['day_of_week']) ? $time_block['day_of_week'] : [];
-            $opens = isset($time_block['opens']) ? esc_html($time_block['opens']) : '';
-            $closes = isset($time_block['closes']) ? esc_html($time_block['closes']) : '';
-            $description = isset($time_block['description']) ? esc_html($time_block['description']) : '';
-
-            if (is_array($days) && !empty($days)) {
-                $days_text = implode(', ', array_map(array(__CLASS__, 'translate_day_name'), $days));
-            } else {
+            if (!is_array($days) || empty($days)) {
                 continue;
             }
 
+            $opens = isset($time_block['opens']) ? esc_html($time_block['opens']) : '';
+            $closes = isset($time_block['closes']) ? esc_html($time_block['closes']) : '';
+            $description = isset($time_block['description']) ? $time_block['description'] : '';
+
+            $day_key = implode(',', $days);
+            $sort_order = isset($day_order[$days[0]]) ? $day_order[$days[0]] : 99;
+
+            if (!isset($grouped[$day_key])) {
+                $grouped[$day_key] = ['days' => $days, 'ranges' => [], 'sort' => $sort_order];
+            }
+
             if ($opens && $closes) {
-                $line = "{$days_text}: {$opens} - {$closes}";
+                $range = "{$opens} - {$closes}";
                 if ($description) {
-                    $line .= " (" . self::translate_description($description) . ")";
+                    $range .= " (" . self::translate_description($description) . ")";
                 }
-                $output .= "<li>{$line}</li>";
+                $grouped[$day_key]['ranges'][] = $range;
             } elseif ($description) {
-                $output .= "<li>{$days_text}: " . self::translate_description($description) . "</li>";
+                $grouped[$day_key]['ranges'][] = self::translate_description($description);
+            }
+        }
+
+        uasort($grouped, function($a, $b) {
+            return ($a['sort'] ?? 99) - ($b['sort'] ?? 99);
+        });
+
+        $output = "<ul class='hours-of-operation-list' style='padding-left: 0px; list-style: none;'>";
+
+        foreach ($grouped as $key => $entry) {
+            if ($key === '__plain__') {
+                foreach ($entry as $item) {
+                    $output .= "<li>" . $item['plain'] . "</li>";
+                }
+                continue;
+            }
+
+            $days_text = implode(', ', array_map(array(__CLASS__, 'translate_day_name'), $entry['days']));
+            if (!empty($entry['ranges'])) {
+                $output .= "<li>{$days_text}: " . implode(', ', $entry['ranges']) . "</li>";
             }
         }
 
         $output .= "</ul>";
         return $output;
+    }
+
+    public static function render_booking_url($json_data)
+    {
+        if (!isset($json_data['booking_url']) || empty($json_data['booking_url'])) {
+            return __("Booking URL not available", "business-profile-render");
+        }
+
+        $booking_url = $json_data['booking_url'];
+
+        if (!self::is_valid_url($booking_url)) {
+            return __("Invalid booking URL", "business-profile-render");
+        }
+
+        return esc_url($booking_url);
     }
 
     private static function translate_description($description) {
