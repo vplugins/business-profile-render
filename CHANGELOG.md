@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Added `load_plugin_textdomain()` so plugin-specific strings load from the `language/` directory
   - Updated `.pot` file with all translatable strings
   - Added Booking Link field as a shortcode
+  - Updated Hours of Operation for multiple shift timing
+  - Fixed Performance Issue
 
 #### Bug
 
