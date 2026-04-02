@@ -11,6 +11,12 @@ class GutenbergBlock {
 
     public static function register_block() {
 
+        // Only register editor assets when in admin context — avoids get_option(),
+        // filemtime(), and preprocess_business_profile_data() running on every frontend page load.
+        if ( ! is_admin() ) {
+            return;
+        }
+
         // Fetch JSON data
         $business_profile_data = get_option('bpr_business_profile');
 
@@ -37,7 +43,6 @@ class GutenbergBlock {
                 'editor_script' => 'business-profile-render-gutenberg-block'
             ));
         }
-
 
     }
 

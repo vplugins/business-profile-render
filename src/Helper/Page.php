@@ -23,22 +23,19 @@ class Page
         }
 
         wp_enqueue_style(
-            "helperpage-style",
-            plugin_dir_url(__FILE__) . "../../assets/css/style.css"
-        );
-
-        wp_enqueue_style(
             "font-awesome",
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"
         );
 
-        wp_enqueue_script(
-            "helperpage-script",
-            plugin_dir_url(__FILE__) . "../../assets/js/helper-page.js",
-            array(),
-            false,
-            true
-        );
+        $css = file_get_contents( plugin_dir_path( __FILE__ ) . '../../assets/css/style.css' );
+        wp_register_style( 'helperpage-style', false );
+        wp_enqueue_style( 'helperpage-style' );
+        wp_add_inline_style( 'helperpage-style', $css );
+
+        $js = file_get_contents( plugin_dir_path( __FILE__ ) . '../../assets/js/helper-page.js' );
+        wp_register_script( 'helperpage-script', false, array(), false, true );
+        wp_enqueue_script( 'helperpage-script' );
+        wp_add_inline_script( 'helperpage-script', $js );
     }
 
     /**

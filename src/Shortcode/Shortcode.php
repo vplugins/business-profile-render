@@ -8,13 +8,8 @@ class ShortCode
 {
     public static function init()
     {
-        add_action('wp_enqueue_scripts', array(__CLASS__, 'add_font_awesome'));
+        wp_register_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css' );
         add_shortcode("business_profile", array(__CLASS__, "render_business_profile"));
-    }
-
-    public static function add_font_awesome()
-    {
-        wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
     }
 
     public static function render_business_profile($attr)
@@ -50,6 +45,7 @@ class ShortCode
         if (self::is_valid_url($json_data[$attr])) {
             $social_media = self::get_social_media($attr);
             if ($social_media) {
+                wp_enqueue_style( 'font-awesome' );
                 return "<a href='" . $json_data[$attr] . "' target='_blank'>" . self::get_icon_from_fontawesome($social_media) . "</a>";
             } else {
                 return "<a href='" . $json_data[$attr] . "' target='_blank'>" . $json_data[$attr] . "</a>";
