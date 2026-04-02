@@ -13,33 +13,29 @@ class Page
     public static function init()
     {
         add_action("admin_menu", array(__CLASS__, "add_admin_page"));
-        add_action("init", array(__CLASS__, "add_action_wp_enqueue_styles"));
-        add_action("init", array(__CLASS__, "add_action_wp_enqueue_scripts"));
-        add_action("init", array(__CLASS__, "add_font_awesome"));
+        add_action("admin_enqueue_scripts", array(__CLASS__, "enqueue_admin_assets"));
     }
 
-    public static function add_action_wp_enqueue_styles()
+    public static function enqueue_admin_assets( $hook )
     {
-        wp_enqueue_style(
-            "helperpage-style",
-            plugin_dir_url(__FILE__) . "../../assets/css/style.css"
-        );
-    }
+        if ( $hook !== 'settings_page_page-settings' ) {
+            return;
+        }
 
-    public static function add_action_wp_enqueue_scripts()
-    {
-        wp_enqueue_script(
-            "helperpage-script",
-            plugin_dir_url(__FILE__) . "../../assets/js/helper-page.js"
-        );
-    }
-
-    public static function add_font_awesome()
-    {
         wp_enqueue_style(
             "font-awesome",
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"
         );
+
+        $css = file_get_contents( plugin_dir_path( __FILE__ ) . '../../assets/css/style.css' );
+        wp_register_style( 'helperpage-style', false );
+        wp_enqueue_style( 'helperpage-style' );
+        wp_add_inline_style( 'helperpage-style', $css );
+
+        $js = file_get_contents( plugin_dir_path( __FILE__ ) . '../../assets/js/helper-page.js' );
+        wp_register_script( 'helperpage-script', false, array(), false, true );
+        wp_enqueue_script( 'helperpage-script' );
+        wp_add_inline_script( 'helperpage-script', $js );
     }
 
     /**
